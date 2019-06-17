@@ -53,17 +53,22 @@ for bug in bugzilla.get_bugs():
         duplicates[dupe].add(bug["id"])
 
 
+english_stop_words = set(stopwords.words("english"))
+
+
 def text_preprocess(text):
     for func in cleanup_functions:
         text = func(text)
 
     text = re.sub("[^a-zA-Z0-9]", " ", text)
+    text = text.lower()
+    text = text.split()
 
     ps = PorterStemmer()
     text = [
         ps.stem(word)
-        for word in text.lower().split()
-        if word not in set(stopwords.words("english")) and len(word) > 1
+        for word in text
+        if word not in english_stop_words and len(word) > 1
     ]
     return text
 
